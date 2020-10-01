@@ -1,40 +1,48 @@
-import java.util.Scanner;
-public class AdditionGame {
+// client side implementation
 
-public static void main(String[] args) {
-    // TODO Auto-generated method stub
+// Java program to illustrate Client Side Programming 
+// for Simple Calculator using TCP 
+import java.io.DataInputStream; 
+import java.io.DataOutputStream; 
+import java.io.IOException; 
+import java.net.InetAddress; 
+import java.net.Socket; 
+import java.net.UnknownHostException; 
+import java.util.Scanner; 
 
-    int num1;
-    int num2;
-    String operation;
+public class Calc_Client 
+{ 
+	public static void main(String[] args) throws IOException 
+	{ 
+		InetAddress ip = InetAddress.getLocalHost(); 
+		int port = 4444; 
+		Scanner sc = new Scanner(System.in); 
 
-    Scanner input = new Scanner(System.in);
+		// Step 1: Open the socket connection. 
+		Socket s = new Socket(ip, port); 
 
-    System.out.println("Please Enter The First Number");
-    num1 = input.nextInt();
+		// Step 2: Communication-get the input and output stream 
+		DataInputStream dis = new DataInputStream(s.getInputStream()); 
+		DataOutputStream dos = new DataOutputStream(s.getOutputStream()); 
 
-    System.out.println("Please Enter The Second Number");
-    num2 = input.nextInt();
+		while (true) 
+		{ 
+			// Enter the equation in the form- 
+			// "operand1 operation operand2" 
+			System.out.print("Enter the equation in the form: "); 
+			System.out.println("'operand operator operand'"); 
 
-    Scanner op = new Scanner (System.in);
+			String inp = sc.nextLine(); 
 
-    System.out.println("Please Enter The Operation");
-    operation = op.next();
+			if (inp.equals("bye")) 
+				break; 
 
-    if (operation.equals("+"))
-    {
-        System.out.println("Your Answer is "+(num1 + num2));
-    }
-    else if (operation.equals("-"))
-    {
-        System.out.println("Your Answer is "+(num1 - num2));
-    }       
-    else if (operation.equals("*"))
-    {
-        System.out.println("Your Answer is "+(num1 * num2));
-    }   
-    else if (operation.equals("/"))
-    {
-        System.out.println("Your Answer is "+(num1 / num2));
-    }
-}
+			// send the equation to server 
+			dos.writeUTF(inp); 
+
+			// wait till request is processed and sent back to client 
+			String ans = dis.readUTF(); 
+			System.out.println("Answer=" + ans); 
+		} 
+	} 
+} 
